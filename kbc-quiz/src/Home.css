@@ -1,0 +1,22 @@
+.navigation{
+  background-color: #d915cf4e;
+  height: 670px;
+  width: 400px;
+  margin: 6px;
+  padding: 20px;
+  font-size: xx-large;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.link{
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.link:hover{
+  text-decoration-line: underline;
+  color: darkgoldenrod;
+}

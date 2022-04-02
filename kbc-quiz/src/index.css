@@ -1,0 +1,36 @@
+/* body {
+  background-image: url('../Images/KBCLogo.webp');
+  background-repeat: no-repeat;
+  background-color: #cccccc;
+  background-size: cover;
+} */
+/* html {
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+} */
+
+/* set background image per page */
+.home-bg {
+  background: url(../Images/KBCLogo.webp) no-repeat;
+  background-size: cover;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.add-question-bg {
+  background: url(../Images/add_question.jpg) no-repeat;
+  background-size: cover;
+  min-width: 100%;
+  min-height: 100%;
+  opacity: 0.9;
+  
+}
+
+.main-quiz-bg {
+  background: url(../Images/game.webp) no-repeat;
+  background-size: cover;
+  min-width: 100%;
+  min-height: 100%;
+}

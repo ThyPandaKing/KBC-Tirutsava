@@ -1,0 +1,28 @@
+.form{
+  background-color: #d915cf4e;
+  /* height: 680px;
+  width: 400px; */
+  height: 100%;
+  width: 45%;
+  margin: 6px;
+  padding: 20px;
+  border: 2px solid #d915cf;
+  border-radius: 2%;
+}
+
+
+.background{
+  display: flex;
+  justify-content: center;
+}
+
+label{
+  color: whitesmoke;
+  font-size: large;
+  margin-top: 8.5px;
+  font-weight: bold;
+}
+
+input{
+  margin: 3px;
+}
