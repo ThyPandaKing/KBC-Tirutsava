@@ -6,7 +6,7 @@ import './Home.css';
 function Home () {
   return (
     <div className="home-bg">
-      <NavBar />
+      <NavBar bg_color={'#d915cf'}/>
       <div className="navigation">
         <div className="links">
           <Link className="link" to="/main-quiz">
