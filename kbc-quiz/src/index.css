@@ -13,14 +13,14 @@
 
 /* set background image per page */
 .home-bg {
-  background: url(../Images/KBCLogo.webp) no-repeat;
+  background: url(./Images/KBCLogo.webp) no-repeat;
   background-size: cover;
   min-width: 100%;
   min-height: 100%;
 }
 
 .add-question-bg {
-  background: url(../Images/add_question.jpg) no-repeat;
+  background: url(./Images/add_question.jpg) no-repeat;
   background-size: cover;
   min-width: 100%;
   min-height: 100%;
@@ -29,7 +29,7 @@
 }
 
 .main-quiz-bg {
-  background: url(../Images/game.webp) no-repeat;
+  background: url(./Images/game.webp) no-repeat;
   background-size: cover;
   min-width: 100%;
   min-height: 100%;

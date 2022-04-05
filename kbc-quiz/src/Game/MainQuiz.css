@@ -11,23 +11,55 @@ p {
   margin: 0%
 }
 
-.holder{
-display: flex;
-flex-direction : column-reverse;
-justify-content: space-between;
-height: 670px;
+.sidebar{
+  margin-top: 20px;
+  margin-right: 5px;
+  width: 300px;
+  background-color: #441078;
+  border: 2px solid goldenrod;
+  border-radius: 10px;
+}
+
+.level{
+  display: flex;
+  justify-content: space-around;
+  color: goldenrod;
+  background-color: #441078;
+  font-size: large;
+  font-weight: bold;
+}
+
+.levels{
+  border-top: 2px solid goldenrod;
+}
+
+.lifelines{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.lifeline{
+  margin: 10px;
+  width: 40px;
+  height: fit-content;
+}
+
+.holder {
+  display: flex;
+  /* flex-direction: column-reverse; */
+  justify-content: space-between;
+  height: 670px;
 }
 
 .container {
-  margin: 30px auto;
-  padding: 20px 15px;
+  padding: 70px 85px;
   height: 100%;
   width: auto;
   border-radius: 4%;
-  
+
 }
 
-.ABCD{
+.ABCD {
   margin-right: 2px;
   color: goldenrod;
 }
@@ -38,42 +70,52 @@ label.box {
   margin-top: 10px;
   padding: 10px 12px;
   cursor: pointer;
-  border: 1px solid #ddd;
+  border: 1px solid goldenrod;
   background-color: #441078;
+  border-radius: 15px;
 }
 
+.userInfo{
+  background-color: #441078;
+  border: 2px solid goldenrod;
+  border-radius: 20px;
+  padding: 10px;
+  font-size: large;
+  color: #ddd;
+  display: flex;
+  justify-content: space-between;
+}
 
-
-p.question{
+p.question {
   display: flex;
   margin-top: 10px;
   padding: 10px 12px;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
   color: #ddd;
-  border: 1px solid #ddd;
+  border: 1px solid goldenrod;
   background-color: #441078;
 }
 
 #one:checked~label.one,
 #two:checked~label.two,
 #three:checked~label.three,
-#four:checked~label.four{
-  border-color: goldenrod
+#four:checked~label.four {
+  border: 3px solid rgb(172, 147, 0);
+  background: #29044d;
 }
 
 
 
 label.box:hover {
-  background: #d5bbf7
+  background: #29044d;
 }
 
 
 label.box .course {
   display: flex;
   align-items: center;
-  width: 100%
-  
+  width: 100%;
 }
 
 
