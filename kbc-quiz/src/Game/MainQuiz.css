@@ -48,6 +48,17 @@ p {
 .white-color{
   color: #ddd;
 }
+.green-color {
+  color: greenyellow;
+}
+
+.gold-color{
+  color: gold;
+}
+
+.white-color.green-color {
+  color: aqua;
+}
 
 .holder {
   display: flex;
@@ -104,13 +115,13 @@ p.question {
   background-color: #441078;
 }
 
-#one:checked~label.one,
+/* #one:checked~label.one,
 #two:checked~label.two,
 #three:checked~label.three,
 #four:checked~label.four {
   border: 3px solid rgb(172, 147, 0);
   background: #29044d;
-}
+} */
 
 
 

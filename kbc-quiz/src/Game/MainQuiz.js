@@ -6,8 +6,9 @@ import flip_the_question from '../Images/flip_the_question.png';
 import audience_poll from '../Images/audience_poll.png';
 import user from '../Images/user.png';
 import {useState, useEffect} from 'react';
+import axios from 'axios';
 
-const question_list = [
+let question_list = [
   {
     question: 'Who is strongest character?',
     level: 1,
@@ -79,8 +80,15 @@ function MainQuiz () {
 
   useEffect (
     () => {
-      question_list.forEach (e => {
-        if (e.level === currentLevel) {
+      axios
+        .post ('http://localhost:3001/find', {
+          level: currentLevel,
+        })
+        .then (res => {
+          question_list = res.data;
+          let random_index = Math.floor (Math.random () * question_list.length);
+          console.log (random_index);
+          const e = res.data[random_index];
           setCurrentQuestion (e.question);
           setOption1 (e.option1);
           setOption2 (e.option2);
@@ -92,8 +100,10 @@ function MainQuiz () {
 
           setColor3 ('');
           setColor4 ('');
-        }
-      });
+        })
+        .catch (err => {
+          console.log (currentLevel, err);
+        });
     },
     [currentLevel]
   );
@@ -113,6 +123,28 @@ function MainQuiz () {
     if (lifeLineUsed.includes ('50/50')) {
       return;
     }
+
+    switch (correctOption) {
+      case 1:
+        setColor2 ('#ddd');
+        setColor4 ('#ddd');
+        break;
+      case 2:
+        setColor3 ('#ddd');
+        setColor1 ('#ddd');
+        break;
+      case 3:
+        setColor2 ('#ddd');
+        setColor1 ('#ddd');
+        break;
+      case 4:
+        setColor2 ('#ddd');
+        setColor3 ('#ddd');
+        break;
+      default:
+        break;
+    }
+
     setLifeLineUsed ([...lifeLineUsed, '50/50']);
   };
   const flipTheQuestion = () => {
@@ -128,8 +160,32 @@ function MainQuiz () {
     setLifeLineUsed ([...lifeLineUsed, 'Audience Poll']);
   };
 
+  const resetAllColor = () => {
+    setColor1 ('');
+    setColor2 ('');
+    setColor3 ('');
+    setColor4 ('');
+  };
+
   const handleOptionSelect = option => {
     setCurrentChosenOption (option);
+    resetAllColor ();
+    switch (option) {
+      case 1:
+        setColor1 ('#29044d');
+        break;
+      case 2:
+        setColor2 ('#29044d');
+        break;
+      case 3:
+        setColor3 ('#29044d');
+        break;
+      case 4:
+        setColor4 ('#29044d');
+        break;
+      default:
+        break;
+    }
   };
 
   const lockAnswer = () => {
@@ -456,6 +512,13 @@ function MainQuiz () {
             <div className="levels">
               {level_list.map ((e, i) => {
                 let classes = 'list-group-item p-2 level ';
+                if (13 - i < currentLevel) {
+                  classes += ' green-color';
+                }
+
+                if (13 - i === currentLevel) {
+                  classes += ' gold-color';
+                }
 
                 for (let k in checkPoints) {
                   if (checkPoints[k] == e) {
@@ -467,9 +530,9 @@ function MainQuiz () {
                 return (
                   <li key={i} className={classes}>
                     <span>{13 - i}:</span>
-                    {' '}
+                    {/* {' '}
                     {13 - i < currentLevel ? <span className="circle" /> : ''}
-                    {' '}
+                    {' '} */}
                     {e}
                   </li>
                 );
