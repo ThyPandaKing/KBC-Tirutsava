@@ -39,7 +39,7 @@ let question_list = [
 ];
 
 function MainQuiz () {
-  const [isInfoColleted, setIsInfoCollected] = useState (false);
+  const [isInfoColleted, setIsInfoCollected] = useState (true);
   const [participantName, setParticipantName] = useState ('');
   const [amountCollected, setAmountCollected] = useState (0);
   const [lifeLineUsed, setLifeLineUsed] = useState ([]);
@@ -55,7 +55,15 @@ function MainQuiz () {
   const [color2, setColor2] = useState ('');
   const [color3, setColor3] = useState ('');
   const [color4, setColor4] = useState ('');
+  let k=50;
+  const [width,setWidth] = useState(50);
 
+  let initialTime = 30;
+  let timer = initialTime;
+
+  const [timmer, setTimmer] = useState(timer);
+  const [position, setPosition] = useState('success');
+  
   const [correctOption, setCorrectOption] = useState (3);
   const [currentChosenOption, setCurrentChosenOption] = useState ('');
 
@@ -95,9 +103,9 @@ function MainQuiz () {
           setOption3 (e.option3);
           setOption4 (e.option4);
           setCorrectOption (e.correctOption);
+         
           setColor1 ('');
           setColor2 ('');
-
           setColor3 ('');
           setColor4 ('');
         })
@@ -126,20 +134,20 @@ function MainQuiz () {
 
     switch (correctOption) {
       case 1:
-        setColor2 ('#ddd');
-        setColor4 ('#ddd');
+        setOption2 ('');
+        setOption4 ('');
         break;
       case 2:
-        setColor3 ('#ddd');
-        setColor1 ('#ddd');
+        setOption3 ('');
+        setOption1 ('');
         break;
       case 3:
-        setColor2 ('#ddd');
-        setColor1 ('#ddd');
+        setOption2 ('');
+        setOption1 ('');
         break;
       case 4:
-        setColor2 ('#ddd');
-        setColor3 ('#ddd');
+        setOption2 ('');
+        setOption3 ('');
         break;
       default:
         break;
@@ -172,16 +180,16 @@ function MainQuiz () {
     resetAllColor ();
     switch (option) {
       case 1:
-        setColor1 ('#29044d');
+        setColor1 ('goldenrod');
         break;
       case 2:
-        setColor2 ('#29044d');
+        setColor2 ('goldenrod');
         break;
       case 3:
-        setColor3 ('#29044d');
+        setColor3 ('goldenrod');
         break;
       case 4:
-        setColor4 ('#29044d');
+        setColor4 ('goldenrod');
         break;
       default:
         break;
@@ -243,6 +251,26 @@ function MainQuiz () {
     if (amountCollected === level_list[13 - currentLevel]) {
       setCurrentLevel (currentLevel + 1);
     }
+  };
+  
+  const startTimer = () => {
+    const interval = setInterval (() => {
+      if (timer === 1) {
+        clearInterval (interval);
+      }
+      timer = timer - 1;
+      setTimmer(timer);
+      k = 100 * timer / (2 * initialTime);
+      setWidth(k);
+      if(k<15){
+        setPosition('danger');
+      }else if(k<30){
+        setPosition('warning');
+      }
+      console.log (timer, k);
+  
+    }, 1000);
+    
   };
 
   return (
@@ -321,6 +349,7 @@ function MainQuiz () {
         </div>
       </div>
       <NavBar bg_color={'#441078'} />
+      
       <div className="holder">
         <div className="container mb-5">
           {isInfoColleted
@@ -358,14 +387,84 @@ function MainQuiz () {
             ? <div
                 className="alert alert-primary"
                 role="alert"
-                style={{marginTop: '300px'}}
+                style={{marginTop: '100px'}}
               >
-                Add user information to start
+                <ul>
+                  <li>
+                    Time Limits
+                    <ul>
+                      <li>30 sec: Checkpoint 1</li>
+                      <li>45 sec: Checkpoint 2</li>
+                    </ul>
+                  </li>
+                  <li>
+                    Lifeline (Only 3 can be used):
+                    <ul>
+                      <li>50 - 50</li>
+                      <li>Expert Advice</li>
+                      <li>Flip the question</li>
+                      <li>Audience Poll</li>
+                    </ul>
+                  </li>
+                  <li>
+                    Participants can leave at any point with their winning prize money or end up winning the
+                    latest checkpoint if they give the wrong answer.
+                  </li>
+                  <li>
+                    Participants can choose the checkpoints
+                  </li>
+                  <li>
+                    Timer will start once the quiz master reads the question
+                  </li>
+                </ul>
               </div>
             : <div>
-                <div className="row">
+            
+                <div
+                  style={{
+                    marginBottom: '0px',
+                    marginTop: '30px',
+                    width: '100%',
+                    position: 'relative',
+                  }}
+                >
+                  <div>
+                    <div
+                      className="progress justify-content-end"
+                      style={{
+                        backgroundColor: 'transparent',
+                        top: '50%',
+                        left: '20%',
+                        transform: `translate(-${50 - width}%, ${50 - width}%)`,
+                      }}
+                    >
+                      <div
+                        className={`progress-bar progress-bar-striped bg-${position}`}
+                        role="progressbar"
+                        style={{width: `${width}%`}}
+                        aria-valuenow="10"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      />
+                      <div
+                        className={`progress-bar progress-bar-striped bg-${position}`}
+                        role="progressbar"
+                        style={{width: `${width}%`}}
+                        aria-valuenow="10"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      />
+
+                    </div>
+                  </div>
+                </div>
+                <div className="row" style={{display:'flex', justifyContent: 'center'}}>
+                <div className="timer">{timmer}</div>
                   <div className="col-12 ">
-                    <p className="fw-bold mt-5 question">
+                    <p
+                      className="fw-bold question"
+                      style={{marginTop: '5px', paddingTop: '0px'}}
+                    >
                       {currentQuestion}
                     </p>
                     <div>
@@ -464,7 +563,7 @@ function MainQuiz () {
                   <div className="d-flex justify-content-center">
 
                     <button className={buttonStyle} onClick={lockAnswer}>
-                      Lock
+                      Check
                     </button>
                     <button
                       className={buttonStyle}
@@ -474,6 +573,9 @@ function MainQuiz () {
                     </button>
                     <button className={buttonStyle} onClick={nextQuestion}>
                       Next
+                    </button>
+                    <button className={buttonStyle} onClick={startTimer}>
+                      Start Timer
                     </button>
 
                   </div>
@@ -521,6 +623,7 @@ function MainQuiz () {
                 }
 
                 for (let k in checkPoints) {
+                  // eslint-disable-next-line eqeqeq
                   if (checkPoints[k] == e) {
                     classes += ' white-color';
                     break;
