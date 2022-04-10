@@ -8,38 +8,10 @@ import user from '../Images/user.png';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 
-let question_list = [
-  {
-    question: 'Who is strongest character?',
-    level: 1,
-    option1: 'Tom',
-    option2: 'Jerry',
-    option3: 'Ben 10',
-    option4: 'Chota Bheem',
-    correctOption: 1,
-  },
-  {
-    question: 'Gara from Naruto series is from ?',
-    level: 2,
-    option1: 'Rajasthan',
-    option2: 'Leaf Village',
-    option3: 'Sand Village',
-    option4: 'Village Area',
-    correctOption: 3,
-  },
-  {
-    question: 'Will is get a girlfriend ?',
-    level: 3,
-    option1: 'No',
-    option2: 'Yes',
-    option3: 'Lol',
-    option4: "Beggars can't be choosers",
-    correctOption: 4,
-  },
-];
+let question_list = [];
 
 function MainQuiz () {
-  const [isInfoColleted, setIsInfoCollected] = useState (true);
+  const [isInfoColleted, setIsInfoCollected] = useState (false);
   const [participantName, setParticipantName] = useState ('');
   const [amountCollected, setAmountCollected] = useState (0);
   const [lifeLineUsed, setLifeLineUsed] = useState ([]);
@@ -55,17 +27,19 @@ function MainQuiz () {
   const [color2, setColor2] = useState ('');
   const [color3, setColor3] = useState ('');
   const [color4, setColor4] = useState ('');
-  let k=50;
-  const [width,setWidth] = useState(50);
+  let k = 50;
+  const [width, setWidth] = useState (50);
 
-  let initialTime = 30;
-  let timer = initialTime;
+  const [currentTimer,setCurrentTimer] = useState(30);
+  let timer = 0;
 
-  const [timmer, setTimmer] = useState(timer);
-  const [position, setPosition] = useState('success');
-  
+  const [timmer, setTimmer] = useState (0);
+  const [linker, setLinker] = useState (timer);
+  const [position, setPosition] = useState ('success');
+
   const [correctOption, setCorrectOption] = useState (3);
   const [currentChosenOption, setCurrentChosenOption] = useState ('');
+  const [isTimePassing, setIsTimePassing] = useState (false);
 
   let lifeline = 'lifeline';
   let buttonStyle = 'btn btn-primary m-4 px-4 py-2 fw-bold';
@@ -86,6 +60,13 @@ function MainQuiz () {
     5,
   ];
 
+  useEffect (() => {
+    let interval = setInterval (() => {
+      timer = timer + 1;
+      setLinker (timer);
+    }, 1000);
+  }, []);
+
   useEffect (
     () => {
       axios
@@ -93,6 +74,18 @@ function MainQuiz () {
           level: currentLevel,
         })
         .then (res => {
+          if (currentLevel <= checkPoints[0]) {
+            setCurrentTimer(30);
+          }
+
+          if (currentLevel > checkPoints[0]) {
+            setCurrentTimer(45);
+          }
+
+          if (currentLevel > checkPoints[1]) {
+            setCurrentTimer(-1);
+          }
+
           question_list = res.data;
           let random_index = Math.floor (Math.random () * question_list.length);
           console.log (random_index);
@@ -103,7 +96,10 @@ function MainQuiz () {
           setOption3 (e.option3);
           setOption4 (e.option4);
           setCorrectOption (e.correctOption);
-         
+          setTimmer (currentTimer);
+          setWidth (50);
+          setIsTimePassing (false);
+          setPosition ('success');
           setColor1 ('');
           setColor2 ('');
           setColor3 ('');
@@ -115,6 +111,23 @@ function MainQuiz () {
     },
     [currentLevel]
   );
+
+  useEffect (
+    () => {
+      if (isTimePassing && timmer > 0) {
+        setTimmer (timmer - 1);
+        k = 100 * timmer / (2 * currentTimer);
+        setWidth (k);
+        if (k < 15) {
+          setPosition ('danger');
+        } else if (k < 30) {
+          setPosition ('warning');
+        }
+      }
+    },
+    [linker]
+  );
+
   const handleQuit = () => {
     alert (
       `Congratulations on winning: "${amountCollected} RS." Your score has been added`
@@ -125,12 +138,15 @@ function MainQuiz () {
     if (lifeLineUsed.includes ('Expert Advise')) {
       return;
     }
+    setIsTimePassing (false);
+
     setLifeLineUsed ([...lifeLineUsed, 'Expert Advise']);
   };
   const fiftyFifty = () => {
     if (lifeLineUsed.includes ('50/50')) {
       return;
     }
+    setIsTimePassing (false);
 
     switch (correctOption) {
       case 1:
@@ -159,12 +175,16 @@ function MainQuiz () {
     if (lifeLineUsed.includes ('Flip the Question')) {
       return;
     }
+    setIsTimePassing (false);
+
     setLifeLineUsed ([...lifeLineUsed, 'Flip the Question']);
   };
   const audiencePoll = () => {
     if (lifeLineUsed.includes ('Audience Poll')) {
       return;
     }
+    setIsTimePassing (false);
+
     setLifeLineUsed ([...lifeLineUsed, 'Audience Poll']);
   };
 
@@ -177,6 +197,9 @@ function MainQuiz () {
 
   const handleOptionSelect = option => {
     setCurrentChosenOption (option);
+
+    setIsTimePassing (false);
+
     resetAllColor ();
     switch (option) {
       case 1:
@@ -197,6 +220,8 @@ function MainQuiz () {
   };
 
   const lockAnswer = () => {
+    setIsTimePassing (false);
+
     if (currentChosenOption === correctOption && amountCollected < 3000) {
       setAmountCollected (level_list[13 - currentLevel]);
       switch (currentChosenOption) {
@@ -252,25 +277,12 @@ function MainQuiz () {
       setCurrentLevel (currentLevel + 1);
     }
   };
-  
+
   const startTimer = () => {
-    const interval = setInterval (() => {
-      if (timer === 1) {
-        clearInterval (interval);
-      }
-      timer = timer - 1;
-      setTimmer(timer);
-      k = 100 * timer / (2 * initialTime);
-      setWidth(k);
-      if(k<15){
-        setPosition('danger');
-      }else if(k<30){
-        setPosition('warning');
-      }
-      console.log (timer, k);
-  
-    }, 1000);
-    
+    if (currentTimer !== -1) {
+      setIsTimePassing (true);
+      setTimmer (currentTimer);
+    }
   };
 
   return (
@@ -313,25 +325,53 @@ function MainQuiz () {
                 <label htmlFor="inputOption1" style={{color: '#441078'}}>
                   Checkpoint 1:
                 </label>
-                <input
-                  type="text"
-                  value={checkPoints[0]}
+                <select
+                  id="inputState"
                   className="form-control"
-                  id="inputOption1"
+                  value={checkPoints[0]}
                   onChange={e =>
                     setCheckPoints ([e.target.value, checkPoints[1]])}
-                />
+                >
+                  <option defaultValue>Choose...</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                </select>
                 <label htmlFor="inputOption1" style={{color: '#441078'}}>
                   Checkpoint 2:
                 </label>
-                <input
-                  type="text"
-                  value={checkPoints[1]}
+                <select
+                  id="inputState"
                   className="form-control"
-                  id="inputOption1"
+                  value={checkPoints[1]}
                   onChange={e =>
                     setCheckPoints ([checkPoints[0], e.target.value])}
-                />
+                >
+                  <option defaultValue>Choose...</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                </select>
               </div>
             </div>
             <div className="modal-footer">
@@ -349,7 +389,7 @@ function MainQuiz () {
         </div>
       </div>
       <NavBar bg_color={'#441078'} />
-      
+
       <div className="holder">
         <div className="container mb-5">
           {isInfoColleted
@@ -419,7 +459,7 @@ function MainQuiz () {
                 </ul>
               </div>
             : <div>
-            
+
                 <div
                   style={{
                     marginBottom: '0px',
@@ -458,8 +498,11 @@ function MainQuiz () {
                     </div>
                   </div>
                 </div>
-                <div className="row" style={{display:'flex', justifyContent: 'center'}}>
-                <div className="timer">{timmer}</div>
+                <div
+                  className="row"
+                  style={{display: 'flex', justifyContent: 'center'}}
+                >
+                  <div className="timer">{ currentTimer!==-1 ? timmer : '∞'}</div>
                   <div className="col-12 ">
                     <p
                       className="fw-bold question"
@@ -623,8 +666,7 @@ function MainQuiz () {
                 }
 
                 for (let k in checkPoints) {
-                  // eslint-disable-next-line eqeqeq
-                  if (checkPoints[k] == e) {
+                  if (checkPoints[k] == 13 - i) {
                     classes += ' white-color';
                     break;
                   }
