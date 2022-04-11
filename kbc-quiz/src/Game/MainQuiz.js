@@ -15,7 +15,7 @@ function MainQuiz () {
   const [participantName, setParticipantName] = useState ('');
   const [amountCollected, setAmountCollected] = useState (0);
   const [lifeLineUsed, setLifeLineUsed] = useState ([]);
-  const [checkPoints, setCheckPoints] = useState ([5, 5]);
+  const [checkPoints, setCheckPoints] = useState ([2, 5]);
 
   const [currentLevel, setCurrentLevel] = useState (1);
   const [currentQuestion, setCurrentQuestion] = useState ('');
@@ -30,7 +30,7 @@ function MainQuiz () {
   let k = 50;
   const [width, setWidth] = useState (50);
 
-  const [currentTimer,setCurrentTimer] = useState(30);
+  const [currentTimer, setCurrentTimer] = useState (30);
   let timer = 0;
 
   const [timmer, setTimmer] = useState (0);
@@ -40,6 +40,7 @@ function MainQuiz () {
   const [correctOption, setCorrectOption] = useState (3);
   const [currentChosenOption, setCurrentChosenOption] = useState ('');
   const [isTimePassing, setIsTimePassing] = useState (false);
+  const [questionId, setQuestionId] = useState ('');
 
   let lifeline = 'lifeline';
   let buttonStyle = 'btn btn-primary m-4 px-4 py-2 fw-bold';
@@ -61,7 +62,7 @@ function MainQuiz () {
   ];
 
   useEffect (() => {
-    let interval = setInterval (() => {
+    setInterval (() => {
       timer = timer + 1;
       setLinker (timer);
     }, 1000);
@@ -75,21 +76,22 @@ function MainQuiz () {
         })
         .then (res => {
           if (currentLevel <= checkPoints[0]) {
-            setCurrentTimer(30);
+            setCurrentTimer (30);
           }
 
           if (currentLevel > checkPoints[0]) {
-            setCurrentTimer(45);
+            setCurrentTimer (45);
           }
 
           if (currentLevel > checkPoints[1]) {
-            setCurrentTimer(-1);
+            setCurrentTimer (-1);
           }
 
           question_list = res.data;
           let random_index = Math.floor (Math.random () * question_list.length);
-          console.log (random_index);
-          const e = res.data[random_index];
+
+          const e = question_list[random_index];
+          question_list[random_index].used = true;
           setCurrentQuestion (e.question);
           setOption1 (e.option1);
           setOption2 (e.option2);
@@ -104,6 +106,7 @@ function MainQuiz () {
           setColor2 ('');
           setColor3 ('');
           setColor4 ('');
+          setQuestionId (e._id);
         })
         .catch (err => {
           console.log (currentLevel, err);
@@ -176,6 +179,26 @@ function MainQuiz () {
       return;
     }
     setIsTimePassing (false);
+    axios
+      .put ('http://localhost:3001/update-level', {
+        id: questionId,
+      })
+      .then (res => {
+        console.log (res.data);
+      });
+    const e = question_list.find (e => e.used === false);
+
+    setCurrentQuestion (e.question);
+    setOption1 (e.option1);
+    setOption2 (e.option2);
+    setOption3 (e.option3);
+    setOption4 (e.option4);
+    setCorrectOption (e.correctOption);
+    setColor1 ('');
+    setColor2 ('');
+    setColor3 ('');
+    setColor4 ('');
+    setQuestionId (e._id);
 
     setLifeLineUsed ([...lifeLineUsed, 'Flip the Question']);
   };
@@ -274,6 +297,14 @@ function MainQuiz () {
 
   const nextQuestion = () => {
     if (amountCollected === level_list[13 - currentLevel]) {
+      axios
+        .put ('http://localhost:3001/update-level', {
+          id: questionId,
+        })
+        .then (res => {
+          console.log (res.data);
+        });
+
       setCurrentLevel (currentLevel + 1);
     }
   };
@@ -502,7 +533,9 @@ function MainQuiz () {
                   className="row"
                   style={{display: 'flex', justifyContent: 'center'}}
                 >
-                  <div className="timer">{ currentTimer!==-1 ? timmer : '∞'}</div>
+                  <div className="timer">
+                    {currentTimer !== -1 ? timmer : '∞'}
+                  </div>
                   <div className="col-12 ">
                     <p
                       className="fw-bold question"
@@ -605,19 +638,32 @@ function MainQuiz () {
                 <div className="col-12">
                   <div className="d-flex justify-content-center">
 
-                    <button className={buttonStyle} onClick={lockAnswer}>
+                    <button
+                      className={buttonStyle}
+                      onClick={lockAnswer}
+                      title="Check the Answer"
+                    >
                       Check
                     </button>
                     <button
                       className={buttonStyle}
                       onClick={amountCollected => handleQuit (amountCollected)}
+                      title="Quit game"
                     >
                       Quit
                     </button>
-                    <button className={buttonStyle} onClick={nextQuestion}>
+                    <button
+                      className={buttonStyle}
+                      onClick={nextQuestion}
+                      title="Jump to next question"
+                    >
                       Next
                     </button>
-                    <button className={buttonStyle} onClick={startTimer}>
+                    <button
+                      className={buttonStyle}
+                      onClick={startTimer}
+                      title="Start the timer"
+                    >
                       Start Timer
                     </button>
 
@@ -633,24 +679,28 @@ function MainQuiz () {
                 src={ask_the_expert}
                 alt="Ask the expert"
                 onClick={() => expertAdvise ()}
+                title="Expert Advice"
               />
               <img
                 className={lifeline}
                 src={fifty_fifty}
                 alt="50/50"
                 onClick={() => fiftyFifty ()}
+                title="50/50"
               />
               <img
                 className={lifeline}
                 src={flip_the_question}
                 alt="Flip Question"
                 onClick={() => flipTheQuestion ()}
+                title="Flip Question"
               />
               <img
                 className={lifeline}
                 src={audience_poll}
                 alt="Audience Poll"
                 onClick={() => audiencePoll ()}
+                title="Audience Poll"
               />
               {/* <img className="lifeline" src={phone_a_friend} alt="Phone Friend" /> */}
             </div>

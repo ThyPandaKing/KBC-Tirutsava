@@ -11,6 +11,7 @@ const questionSchema = new Schema ({
   option3: {type: String, required: true},
   option4: {type: String, required: true},
   correctOption: {type: Number, required: true},
+  used: {type: Boolean, default: false},
   date: {type: Date, default: Date.now},
 });
 

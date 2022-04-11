@@ -14,19 +14,19 @@ router.get ('/question', async (req, res) => {
 
 router.post ('/find', async (req, res) => {
   const {level} = req.body;
-  console.log (level);
-  Question
-    .find ({})
+
+  Question.find ({})
     .sort ({time: -1})
     .then (questions => {
-      const listFromUser = questions.filter (q => q.level === level);
-      console.log (listFromUser);
+      const listFromUser = questions.filter (
+        q => q.level === level && q.used === false
+      );
+
       res.json (listFromUser);
     })
     .catch (err => console.log ('from question.js ' + err));
 });
 
-// this request will send the questions in most recent first order
 router.post ('/add-question', async (req, res) => {
   try {
     const {
@@ -71,35 +71,27 @@ router.post ('/add-question', async (req, res) => {
   }
 });
 
-// this method is used to check if the user has already liked the answer or not
-router.post ('/check', async (req, res) => {
+router.put ('/update-level', async (req, res) => {
   try {
-    const {userId, answerId} = req.body;
+    const {id} = req.body;
+    console.log (id);
 
-    await askSomethingAnswer
-      .findById (answerId)
-      .then (resp => {
-        if (resp) {
-          const LikeId = resp.liked.find (likeId => likeId === userId);
-          // user has liked it
-          if (LikeId) {
-            return res.send ('liked');
-          }
-          const dislikeId = resp.disliked.find (
-            dislikeId => dislikeId === userId
-          );
-          // user has disliked it
-          if (dislikeId) {
-            return res.send ('disliked');
-          }
-
-          // nothing is done
-          return res.send ('none');
+    Question.findByIdAndUpdate (
+      id,
+      {
+        used: true,
+      },
+      {new: true},
+      (err, result) => {
+        if (err) {
+          console.log (err);
         } else {
-          return res.send ('none');
+          console.log ('updated');
         }
-      })
-      .catch (err => console.log (err));
+      }
+    );
+
+    res.send ('ook');
   } catch (err) {
     console.log (err);
     res.send ('some error');
