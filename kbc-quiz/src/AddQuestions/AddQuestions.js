@@ -37,6 +37,13 @@ function AddQuestions () {
       .catch (err => console.log (err));
   };
 
+  const handleReset = () => {
+    axios.put ('http://localhost:3001/reset-all', {}).then (res => {
+      console.log ('done', res.data);
+      window.location.reload();
+    });
+  };
+
   return (
     <div className="add-question-bg">
       <NavBar />
@@ -183,11 +190,19 @@ function AddQuestions () {
       </div>
       <button
         className="btn btn-primary"
-        style={{width:'100%'}}
+        style={{width: '100%'}}
         onClick={() => window.open ('http://localhost:3001/question', '_blank')}
       >
         Show all question
       </button>
+      <button
+        className="btn btn-primary"
+        style={{width: '100%'}}
+        onClick={() => handleReset ()}
+      >
+        Reset all question
+      </button>
+
     </div>
   );
 }

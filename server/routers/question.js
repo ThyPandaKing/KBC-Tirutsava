@@ -98,4 +98,36 @@ router.put ('/update-level', async (req, res) => {
   }
 });
 
+router.put ('/reset-all', async (req, res) => {
+  try {
+    let q = [];
+    await Question.find ({}).then (questions => {
+      q = questions;
+    });
+    
+
+    await q.forEach (element => {
+       Question.findByIdAndUpdate (
+        element._id,
+        {
+          used: false,
+        },
+        {new: true},
+        (err, result) => {
+          if (err) {
+            console.log (err);
+          } else {
+            console.log ('updated');
+          }
+        }
+      );
+    });
+
+    res.send ('ook');
+  } catch (err) {
+    console.log (err);
+    res.send ('some error');
+  }
+});
+
 module.exports = router;

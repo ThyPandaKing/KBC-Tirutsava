@@ -4,6 +4,7 @@ import ask_the_expert from '../Images/ask_the_expert.png';
 import fifty_fifty from '../Images/fifty_fifty.png';
 import flip_the_question from '../Images/flip_the_question.png';
 import audience_poll from '../Images/audience_poll.png';
+import big_b from '../Images/big_b.jpg';
 import user from '../Images/user.png';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
@@ -41,6 +42,7 @@ function MainQuiz () {
   const [currentChosenOption, setCurrentChosenOption] = useState ('');
   const [isTimePassing, setIsTimePassing] = useState (false);
   const [questionId, setQuestionId] = useState ('');
+  const [gameOver, setGameOver] = useState (false);
 
   let lifeline = 'lifeline';
   let buttonStyle = 'btn btn-primary m-4 px-4 py-2 fw-bold';
@@ -132,10 +134,7 @@ function MainQuiz () {
   );
 
   const handleQuit = () => {
-    alert (
-      `Congratulations on winning: "${amountCollected} RS." Your score has been added`
-    );
-    window.location = 'http://localhost:3000/';
+    setGameOver (true);
   };
   const expertAdvise = () => {
     if (lifeLineUsed.includes ('Expert Advise')) {
@@ -287,10 +286,9 @@ function MainQuiz () {
             amount = checkPoints[i];
           }
         }
-        alert (
-          `Alas, this was a wrong answer, as per your most recent checkpoint you will get ${amount}`
-        );
-        window.location = 'http://localhost:3000/';
+        setAmountCollected (amount);
+
+        setGameOver (true);
       }, 1000);
     }
   };
@@ -317,426 +315,469 @@ function MainQuiz () {
   };
 
   return (
-    <div className="main-quiz-bg">
-
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                User Information
+    <div>
+      {gameOver
+        ? <div
+            className="card text-center"
+            style={{
+              backgroundColor: '#441078',
+              margin: '100px',
+              color: 'goldenrod',
+              fontSize: 'xx-large',
+            }}
+          >
+            <div className="card-header">
+              Game Over!!!
+            </div>
+            <div className="card-body">
+              <img src={big_b} alt="big b" style={{height: '250px'}} />
+              <h5 className="card-title" style={{fontSize: 'xx-large'}}>
+                अध्भुत !!!
               </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
+              <p className="card-text">
+                Congratulations Mr/Miss
+                {' '}
+                {participantName}
+                {' '}
+                for winning
+                {' '}
+                {amountCollected}
+                {' '}
+                Rs...
+              </p>
+              <a href="http://localhost:3000/" className="btn btn-primary">
+                Return Home
+              </a>
             </div>
-            <div className="modal-body">
-              <div className="form-group col-md-6">
-                <label htmlFor="inputOption1" style={{color: '#441078'}}>
-                  Name:
-                </label>
-                <input
-                  type="text"
-                  value={participantName}
-                  className="form-control"
-                  id="inputOption1"
-                  onChange={e => setParticipantName (e.target.value)}
-                />
-              </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="inputOption1" style={{color: '#441078'}}>
-                  Checkpoint 1:
-                </label>
-                <select
-                  id="inputState"
-                  className="form-control"
-                  value={checkPoints[0]}
-                  onChange={e =>
-                    setCheckPoints ([e.target.value, checkPoints[1]])}
-                >
-                  <option defaultValue>Choose...</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
-                  <option>13</option>
-                </select>
-                <label htmlFor="inputOption1" style={{color: '#441078'}}>
-                  Checkpoint 2:
-                </label>
-                <select
-                  id="inputState"
-                  className="form-control"
-                  value={checkPoints[1]}
-                  onChange={e =>
-                    setCheckPoints ([checkPoints[0], e.target.value])}
-                >
-                  <option defaultValue>Choose...</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
-                  <option>13</option>
-                </select>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-                onClick={() => setIsInfoCollected (true)}
-              >
-                Save Changes
-
-              </button>
+            <div className="card-footer text-muted">
+              {currentLevel - 1} question solved..
             </div>
           </div>
-        </div>
-      </div>
-      <NavBar bg_color={'#441078'} />
+        : <div className="main-quiz-bg">
 
-      <div className="holder">
-        <div className="container mb-5">
-          {isInfoColleted
-            ? <div className="userInfo">
-                <span>
-                  <img
-                    src={user}
-                    alt="user"
-                    style={{width: '50px', height: '50px', margin: '5px'}}
-                  />
-                  <p>Welcome, {participantName}</p>
-                </span>
-                <span>
-                  <p>Amount Collected: {amountCollected}</p>
-                  <p>
-                    Lifeline Used:
-                    {' '}
-                    {lifeLineUsed.length > 0
-                      ? lifeLineUsed.map (e => e + ', ')
-                      : 'None'}
-                  </p>
-                  <p>Checkpoints: {checkPoints[0] + ' & ' + checkPoints[1]}</p>
-                </span>
-
-              </div>
-            : <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
-              >
-                Add user Information
-              </button>}
-          {!isInfoColleted
-            ? <div
-                className="alert alert-primary"
-                role="alert"
-                style={{marginTop: '100px'}}
-              >
-                <ul>
-                  <li>
-                    Time Limits
-                    <ul>
-                      <li>30 sec: Checkpoint 1</li>
-                      <li>45 sec: Checkpoint 2</li>
-                    </ul>
-                  </li>
-                  <li>
-                    Lifeline (Only 3 can be used):
-                    <ul>
-                      <li>50 - 50</li>
-                      <li>Expert Advice</li>
-                      <li>Flip the question</li>
-                      <li>Audience Poll</li>
-                    </ul>
-                  </li>
-                  <li>
-                    Participants can leave at any point with their winning prize money or end up winning the
-                    latest checkpoint if they give the wrong answer.
-                  </li>
-                  <li>
-                    Participants can choose the checkpoints
-                  </li>
-                  <li>
-                    Timer will start once the quiz master reads the question
-                  </li>
-                </ul>
-              </div>
-            : <div>
-
-                <div
-                  style={{
-                    marginBottom: '0px',
-                    marginTop: '30px',
-                    width: '100%',
-                    position: 'relative',
-                  }}
-                >
-                  <div>
-                    <div
-                      className="progress justify-content-end"
-                      style={{
-                        backgroundColor: 'transparent',
-                        top: '50%',
-                        left: '20%',
-                        transform: `translate(-${50 - width}%, ${50 - width}%)`,
-                      }}
-                    >
-                      <div
-                        className={`progress-bar progress-bar-striped bg-${position}`}
-                        role="progressbar"
-                        style={{width: `${width}%`}}
-                        aria-valuenow="10"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
+            <div
+              className="modal fade"
+              id="exampleModal"
+              tabIndex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">
+                      User Information
+                    </h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    />
+                  </div>
+                  <div className="modal-body">
+                    <div className="form-group col-md-6">
+                      <label htmlFor="inputOption1" style={{color: '#441078'}}>
+                        Name:
+                      </label>
+                      <input
+                        type="text"
+                        value={participantName}
+                        className="form-control"
+                        id="inputOption1"
+                        onChange={e => setParticipantName (e.target.value)}
                       />
-                      <div
-                        className={`progress-bar progress-bar-striped bg-${position}`}
-                        role="progressbar"
-                        style={{width: `${width}%`}}
-                        aria-valuenow="10"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      />
-
+                    </div>
+                    <div className="form-group col-md-6">
+                      <label htmlFor="inputOption1" style={{color: '#441078'}}>
+                        Checkpoint 1:
+                      </label>
+                      <select
+                        id="inputState"
+                        className="form-control"
+                        value={checkPoints[0]}
+                        onChange={e =>
+                          setCheckPoints ([e.target.value, checkPoints[1]])}
+                      >
+                        <option defaultValue>Choose...</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                      </select>
+                      <label htmlFor="inputOption1" style={{color: '#441078'}}>
+                        Checkpoint 2:
+                      </label>
+                      <select
+                        id="inputState"
+                        className="form-control"
+                        value={checkPoints[1]}
+                        onChange={e =>
+                          setCheckPoints ([checkPoints[0], e.target.value])}
+                      >
+                        <option defaultValue>Choose...</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                      </select>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="row"
-                  style={{display: 'flex', justifyContent: 'center'}}
-                >
-                  <div className="timer">
-                    {currentTimer !== -1 ? timmer : '∞'}
-                  </div>
-                  <div className="col-12 ">
-                    <p
-                      className="fw-bold question"
-                      style={{marginTop: '5px', paddingTop: '0px'}}
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      data-bs-dismiss="modal"
+                      onClick={() => setIsInfoCollected (true)}
                     >
-                      {currentQuestion}
-                    </p>
-                    <div>
-                      <div className="row">
-                        <div className="col-md-6 option">
-                          <input
-                            type="radio"
-                            name="box"
-                            id="one"
-                            onClick={() => handleOptionSelect (1)}
-                          />
-                          <label
-                            htmlFor="one"
-                            className="box one w-100"
-                            style={{backgroundColor: color1}}
-                          >
-                            <div className="course">
+                      Save Changes
 
-                              <div className="ABCD">A:</div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <NavBar bg_color={'#441078'} />
 
-                              <span className="subject">{option1}</span>
-
-                            </div>
-                          </label>
-                        </div>
-                        <div className="col-md-6 option">
-                          <input
-                            type="radio"
-                            name="box"
-                            id="two"
-                            onClick={() => handleOptionSelect (2)}
-                          />
-                          <label
-                            htmlFor="two"
-                            className="box two w-100"
-                            style={{backgroundColor: color2}}
-                          >
-                            <div className="course">
-
-                              <div className="ABCD">B:</div>
-
-                              <span className="subject"> {option2} </span>
-
-                            </div>
-                          </label>
-                        </div>
-                        <div className="col-md-6 option">
-                          <input
-                            type="radio"
-                            name="box"
-                            id="three"
-                            onClick={() => handleOptionSelect (3)}
-                          />
+            <div className="holder">
+              <div className="container mb-5">
+                {isInfoColleted
+                  ? <div className="userInfo">
+                      <span>
+                        <img
+                          src={user}
+                          alt="user"
+                          style={{width: '50px', height: '50px', margin: '5px'}}
+                        />
+                        <p>Welcome, {participantName}</p>
+                      </span>
+                      <span>
+                        <p>Amount Collected: {amountCollected}</p>
+                        <p>
+                          Lifeline Used:
                           {' '}
-                          <label
-                            htmlFor="three"
-                            className="box three w-100"
-                            style={{backgroundColor: color3}}
+                          {lifeLineUsed.length > 0
+                            ? lifeLineUsed.map (e => e + ', ')
+                            : 'None'}
+                        </p>
+                        <p>
+                          Checkpoints: {checkPoints[0] + ' & ' + checkPoints[1]}
+                        </p>
+                      </span>
+
+                    </div>
+                  : <button
+                      type="button"
+                      className="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal"
+                    >
+                      Add user Information
+                    </button>}
+                {!isInfoColleted
+                  ? <div
+                      className="alert alert-primary"
+                      role="alert"
+                      style={{marginTop: '100px'}}
+                    >
+                      <ul>
+                        <li>
+                          Time Limits
+                          <ul>
+                            <li>30 sec: Checkpoint 1</li>
+                            <li>45 sec: Checkpoint 2</li>
+                          </ul>
+                        </li>
+                        <li>
+                          Lifeline (Only 3 can be used):
+                          <ul>
+                            <li>50 - 50</li>
+                            <li>Expert Advice</li>
+                            <li>Flip the question</li>
+                            <li>Audience Poll</li>
+                          </ul>
+                        </li>
+                        <li>
+                          Participants can leave at any point with their winning prize money or end up winning the
+                          latest checkpoint if they give the wrong answer.
+                        </li>
+                        <li>
+                          Participants can choose the checkpoints
+                        </li>
+                        <li>
+                          Timer will start once the quiz master reads the question
+                        </li>
+                      </ul>
+                    </div>
+                  : <div>
+
+                      <div
+                        style={{
+                          marginBottom: '0px',
+                          marginTop: '30px',
+                          width: '100%',
+                          position: 'relative',
+                        }}
+                      >
+                        <div>
+                          <div
+                            className="progress justify-content-end"
+                            style={{
+                              backgroundColor: 'transparent',
+                              top: '50%',
+                              left: '20%',
+                              transform: `translate(-${50 - width}%, ${50 - width}%)`,
+                            }}
                           >
-                            <div className="course">
+                            <div
+                              className={`progress-bar progress-bar-striped bg-${position}`}
+                              role="progressbar"
+                              style={{width: `${width}%`}}
+                              aria-valuenow="10"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            />
+                            <div
+                              className={`progress-bar progress-bar-striped bg-${position}`}
+                              role="progressbar"
+                              style={{width: `${width}%`}}
+                              aria-valuenow="10"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            />
 
-                              <div className="ABCD">C:</div>
-
-                              <span className="subject"> {option3} </span>
-
-                            </div>
-                          </label>
-                        </div>
-                        <div className="col-md-6 option">
-                          <input
-                            type="radio"
-                            name="box"
-                            id="four"
-                            onClick={() => handleOptionSelect (4)}
-                          />
-                          {' '}
-                          <label
-                            htmlFor="four"
-                            className="box four w-100"
-                            style={{backgroundColor: color4}}
-                          >
-                            <div className="course">
-
-                              <div className="ABCD">D:</div>
-
-                              <span className="subject"> {option4} </span>
-
-                            </div>
-                          </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                      <div
+                        className="row"
+                        style={{display: 'flex', justifyContent: 'center'}}
+                      >
+                        <div className="timer">
+                          {currentTimer !== -1 ? timmer : '∞'}
+                        </div>
+                        <div className="col-12 ">
+                          <p
+                            className="fw-bold question"
+                            style={{marginTop: '5px', paddingTop: '0px'}}
+                          >
+                            {currentQuestion}
+                          </p>
+                          <div>
+                            <div className="row">
+                              <div className="col-md-6 option">
+                                <input
+                                  type="radio"
+                                  name="box"
+                                  id="one"
+                                  onClick={() => handleOptionSelect (1)}
+                                />
+                                <label
+                                  htmlFor="one"
+                                  className="box one w-100"
+                                  style={{backgroundColor: color1}}
+                                >
+                                  <div className="course">
+
+                                    <div className="ABCD">A:</div>
+
+                                    <span className="subject">{option1}</span>
+
+                                  </div>
+                                </label>
+                              </div>
+                              <div className="col-md-6 option">
+                                <input
+                                  type="radio"
+                                  name="box"
+                                  id="two"
+                                  onClick={() => handleOptionSelect (2)}
+                                />
+                                <label
+                                  htmlFor="two"
+                                  className="box two w-100"
+                                  style={{backgroundColor: color2}}
+                                >
+                                  <div className="course">
+
+                                    <div className="ABCD">B:</div>
+
+                                    <span className="subject"> {option2} </span>
+
+                                  </div>
+                                </label>
+                              </div>
+                              <div className="col-md-6 option">
+                                <input
+                                  type="radio"
+                                  name="box"
+                                  id="three"
+                                  onClick={() => handleOptionSelect (3)}
+                                />
+                                {' '}
+                                <label
+                                  htmlFor="three"
+                                  className="box three w-100"
+                                  style={{backgroundColor: color3}}
+                                >
+                                  <div className="course">
+
+                                    <div className="ABCD">C:</div>
+
+                                    <span className="subject"> {option3} </span>
+
+                                  </div>
+                                </label>
+                              </div>
+                              <div className="col-md-6 option">
+                                <input
+                                  type="radio"
+                                  name="box"
+                                  id="four"
+                                  onClick={() => handleOptionSelect (4)}
+                                />
+                                {' '}
+                                <label
+                                  htmlFor="four"
+                                  className="box four w-100"
+                                  style={{backgroundColor: color4}}
+                                >
+                                  <div className="course">
+
+                                    <div className="ABCD">D:</div>
+
+                                    <span className="subject"> {option4} </span>
+
+                                  </div>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-12">
+                        <div className="d-flex justify-content-center">
+
+                          <button
+                            className={buttonStyle}
+                            onClick={lockAnswer}
+                            title="Check the Answer"
+                          >
+                            Check
+                          </button>
+
+                          <button
+                            className={buttonStyle}
+                            onClick={amountCollected =>
+                              handleQuit (amountCollected)}
+                            title="Quit game"
+                          >
+                            Quit
+                          </button>
+                          <button
+                            className={buttonStyle}
+                            onClick={nextQuestion}
+                            title="Jump to next question"
+                          >
+                            Next
+                          </button>
+                          <button
+                            className={buttonStyle}
+                            onClick={startTimer}
+                            title="Start the timer"
+                          >
+                            Start Timer
+                          </button>
+
+                        </div>
+                      </div>
+                    </div>}
+              </div>
+              <div>
+                <ul className="list-group list-group-flush sidebar">
+                  <div className="lifelines">
+                    <img
+                      className={lifeline}
+                      src={ask_the_expert}
+                      alt="Ask the expert"
+                      onClick={() => expertAdvise ()}
+                      title="Expert Advice"
+                    />
+                    <img
+                      className={lifeline}
+                      src={fifty_fifty}
+                      alt="50/50"
+                      onClick={() => fiftyFifty ()}
+                      title="50/50"
+                    />
+                    <img
+                      className={lifeline}
+                      src={flip_the_question}
+                      alt="Flip Question"
+                      onClick={() => flipTheQuestion ()}
+                      title="Flip Question"
+                    />
+                    <img
+                      className={lifeline}
+                      src={audience_poll}
+                      alt="Audience Poll"
+                      onClick={() => audiencePoll ()}
+                      title="Audience Poll"
+                    />
+                    {/* <img className="lifeline" src={phone_a_friend} alt="Phone Friend" /> */}
                   </div>
-                </div>
-                <div className="col-12">
-                  <div className="d-flex justify-content-center">
+                  <div className="levels">
+                    {level_list.map ((e, i) => {
+                      let classes = 'list-group-item p-2 level ';
+                      if (13 - i < currentLevel) {
+                        classes += ' green-color';
+                      }
 
-                    <button
-                      className={buttonStyle}
-                      onClick={lockAnswer}
-                      title="Check the Answer"
-                    >
-                      Check
-                    </button>
-                    <button
-                      className={buttonStyle}
-                      onClick={amountCollected => handleQuit (amountCollected)}
-                      title="Quit game"
-                    >
-                      Quit
-                    </button>
-                    <button
-                      className={buttonStyle}
-                      onClick={nextQuestion}
-                      title="Jump to next question"
-                    >
-                      Next
-                    </button>
-                    <button
-                      className={buttonStyle}
-                      onClick={startTimer}
-                      title="Start the timer"
-                    >
-                      Start Timer
-                    </button>
+                      if (13 - i === currentLevel) {
+                        classes += ' gold-color';
+                      }
 
-                  </div>
-                </div>
-              </div>}
-        </div>
-        <div>
-          <ul className="list-group list-group-flush sidebar">
-            <div className="lifelines">
-              <img
-                className={lifeline}
-                src={ask_the_expert}
-                alt="Ask the expert"
-                onClick={() => expertAdvise ()}
-                title="Expert Advice"
-              />
-              <img
-                className={lifeline}
-                src={fifty_fifty}
-                alt="50/50"
-                onClick={() => fiftyFifty ()}
-                title="50/50"
-              />
-              <img
-                className={lifeline}
-                src={flip_the_question}
-                alt="Flip Question"
-                onClick={() => flipTheQuestion ()}
-                title="Flip Question"
-              />
-              <img
-                className={lifeline}
-                src={audience_poll}
-                alt="Audience Poll"
-                onClick={() => audiencePoll ()}
-                title="Audience Poll"
-              />
-              {/* <img className="lifeline" src={phone_a_friend} alt="Phone Friend" /> */}
-            </div>
-            <div className="levels">
-              {level_list.map ((e, i) => {
-                let classes = 'list-group-item p-2 level ';
-                if (13 - i < currentLevel) {
-                  classes += ' green-color';
-                }
+                      for (let k in checkPoints) {
+                        if (checkPoints[k] == 13 - i) {
+                          classes += ' white-color';
+                          break;
+                        }
+                      }
 
-                if (13 - i === currentLevel) {
-                  classes += ' gold-color';
-                }
-
-                for (let k in checkPoints) {
-                  if (checkPoints[k] == 13 - i) {
-                    classes += ' white-color';
-                    break;
-                  }
-                }
-
-                return (
-                  <li key={i} className={classes}>
-                    <span>{13 - i}:</span>
-                    {/* {' '}
+                      return (
+                        <li key={i} className={classes}>
+                          <span>{13 - i}:</span>
+                          {/* {' '}
                     {13 - i < currentLevel ? <span className="circle" /> : ''}
                     {' '} */}
-                    {e}
-                  </li>
-                );
-              })}
-            </div>
-          </ul>
-        </div>
+                          {e}
+                        </li>
+                      );
+                    })}
+                  </div>
+                </ul>
+              </div>
 
-      </div>
+            </div>
+          </div>}
     </div>
   );
 }
