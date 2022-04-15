@@ -3,7 +3,7 @@ import './MainQuiz.css';
 import ask_the_expert from '../Images/ask_the_expert.png';
 import fifty_fifty from '../Images/fifty_fifty.png';
 import flip_the_question from '../Images/flip_the_question.png';
-import audience_poll from '../Images/audience_poll.png';
+import phone_a_friend from '../Images/audience_poll.png';
 import big_b from '../Images/big_b.jpg';
 import user from '../Images/user.png';
 import {useState, useEffect} from 'react';
@@ -119,7 +119,7 @@ function MainQuiz () {
 
   useEffect (
     () => {
-      if (isTimePassing && timmer > 0) {
+      if (isTimePassing && timmer >= 0) {
         setTimmer (timmer - 1);
         k = 100 * timmer / (2 * currentTimer);
         setWidth (k);
@@ -201,13 +201,13 @@ function MainQuiz () {
 
     setLifeLineUsed ([...lifeLineUsed, 'Flip the Question']);
   };
-  const audiencePoll = () => {
-    if (lifeLineUsed.includes ('Audience Poll')) {
+  const phoneAFriend = () => {
+    if (lifeLineUsed.includes ('Phone A Friend')) {
       return;
     }
     setIsTimePassing (false);
 
-    setLifeLineUsed ([...lifeLineUsed, 'Audience Poll']);
+    setLifeLineUsed ([...lifeLineUsed, 'Phone A Friend']);
   };
 
   const resetAllColor = () => {
@@ -282,8 +282,8 @@ function MainQuiz () {
       setTimeout (() => {
         let amount = 0;
         for (let i in checkPoints) {
-          if (checkPoints[i] <= amountCollected) {
-            amount = checkPoints[i];
+          if (level_list[13 - checkPoints[i]] <= amountCollected) {
+            amount = level_list[13 - checkPoints[i]];
           }
         }
         setAmountCollected (amount);
@@ -335,7 +335,7 @@ function MainQuiz () {
                 अध्भुत !!!
               </h5>
               <p className="card-text">
-                Congratulations Mr/Miss
+                Congratulations
                 {' '}
                 {participantName}
                 {' '}
@@ -512,7 +512,7 @@ function MainQuiz () {
                             <li>50 - 50</li>
                             <li>Expert Advice</li>
                             <li>Flip the question</li>
-                            <li>Audience Poll</li>
+                            <li>Phone a Friend</li>
                           </ul>
                         </li>
                         <li>
@@ -737,10 +737,10 @@ function MainQuiz () {
                     />
                     <img
                       className={lifeline}
-                      src={audience_poll}
-                      alt="Audience Poll"
-                      onClick={() => audiencePoll ()}
-                      title="Audience Poll"
+                      src={phone_a_friend}
+                      alt="Phone a Friend"
+                      onClick={() => phoneAFriend ()}
+                      title="Phone a friend"
                     />
                     {/* <img className="lifeline" src={phone_a_friend} alt="Phone Friend" /> */}
                   </div>
